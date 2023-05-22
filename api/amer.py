@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler
 from urllib import parse
+import platform
 
 class handler(BaseHTTPRequestHandler):
 
@@ -14,6 +15,8 @@ class handler(BaseHTTPRequestHandler):
             message = "Hello, " + name + "!" + age
         else:
             message = "Hello, stranger!"
+
+        message += "\n\n" + "your python version is = " + platform.platform()    
 
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
