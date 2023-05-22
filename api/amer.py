@@ -12,7 +12,7 @@ class handler(BaseHTTPRequestHandler):
         name = dictionary.get('name')
         age = dictionary.get('age')
         if name:
-            message = "Hello, " + name + "!" + age
+            message = "Hello, " + name + "!"
         else:
             message = "Hello, stranger!"
 
