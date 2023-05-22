@@ -1,24 +1,34 @@
 from http.server import BaseHTTPRequestHandler
 from urllib import parse
-import platform
 import requests
 
-class handler(BaseHTTPRequestHandler):
+class CustomRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        s = self.path  # path is an attribute of BaseHTTPRequestHandler
-        url_components = parse.urlsplit(s)
-        query_string_list = parse.parse_qsl(url_components.query)  # should return a list of tuples
-        dictionary = dict(query_string_list)  # convert the list of tuples to a dictionary
-        country= dictionary.get('country')
+        url_components = parse.urlsplit(self.path)
+        query_string_list = parse.parse_qsl(url_components.query)
+        dictionary = dict(query_string_list)
+        country = dictionary.get('country')
         if country:
-            url='https://restcountries.com/v3.1/name/'
-            r = requests.get(url+country)
-            data = r.json()
-            
+            url = f"https://restcountries.com/v3.1/name/{country}"
+            response = requests.get(url)
+            data = response.json()
+            if isinstance(data, list):
+                country_data = data[0]
+                capital = country_data["capital"]
+                self.send_response(200)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(capital.encode('utf-8'))
+            else:
+                self.send_response(404)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(b"Country not found.")
+        else:
+            self.send_response(400)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(b"Missing 'country' parameter.")
 
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        self.wfile.write(data.encode('utf-8'))
         return
