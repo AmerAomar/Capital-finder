@@ -16,7 +16,7 @@ class handler(BaseHTTPRequestHandler):
         else:
             message = "Hello, stranger!"
 
-        message += "\n\n" + "your python version is = " + platform.platform()    
+        message += "\n\n" + "your python version is = " + platform.python_version()    
 
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
